@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <Windows.h>
+
+typedef struct element
+{
+  int key;
+  int empty;
+}element;
+
+void open();
+void COLOR(int);
+void InitTable(element *ht);
+int hash_Function(int key);  //h(x)
+int hash_Insert(element item, element *ht);
+int HashSearch(element item, element *ht);
+
+element item;
+element *hash_table;
+int *find;
+int D, M, N;
+
+int main(void)
+{
+  open();
+  element linear;
+  COLOR(15);
+  for (int i = 0; i< D; i++)
+  {
+    if (hash_table[i].key == 0)
+      printf("%d : \n", i);
+    
+    else
+      printf("%d : %d\n", i, hash_table[i].key);
+  }
+  COLOR(14);
+  printf("\nSearch :\n);
+  COLOR(15);
+  for( int i =0; i<N; i++)
+  {
+    linear.key = find[i];
+    HashSearch(linear, hash_table);
+  }
+  printf("\n");
+  return 0;
+}
+
+void open() //파일 오픈
+{
+  FILE *fp = fopen("input.txt", "r");
+  fscanf(fp, "%d %d %d", &D, &M, &N);
+  
+  hash_table = (element*)malloc(sizeof(element) * D);
+  find = (int*)malloc(sizeof(int)*N);
+  InitTable(hash_table);
+  
+  for (int i = 0; i<M; i++)
+  {
+    fscanf(fp, "%d\n", &item.key);
+    hash_Insert(item, hash_table);
+	}  	
+  for (int i = 0; i<N; i++)		
+    fscanf(fp, "%d", &find[i]);	
+  fclose(fp); 
+  
+} 
+
+void COLOR(int color)
+{
+  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
+
+
+void InitTable(element *ht) // 해시테이블 초기화 
+{	
+  int i;	
+  for (i = 0; i < D; i++)	
+  {		
+    memset(&ht[i].key, 0, sizeof(ht[i].key));		
+    ht[i].empty = -1;	
+  }
+} 
+
+
+int hash_Function(int key) //h(x)
+{	
+  return  key % D;
+} 
+
+int hash_Insert(element item, element *ht)
+{	
+  int i, value;	value = i = hash_Function(item.key); 	
+  
+  while (ht[i].empty == 1)	
+  {		
+    if (item.key == ht[i].key)		
+    {			
+      return;		
+    }		
+    i = (i + 1) % D; //충돌일어나면 그다음 테이블에 삽입		
+    if (i == value)			
+      return ;	
+  } 	
+  
+item.empty = 1;	
+ht[i] = item;
+}
+
+int HashSearch(element item, element *ht) // 키 탐색 
+{	
+  int i, value;	
+  value = i = hash_Function(item.key);	
+  while (!(ht[i].empty == -1)) // 버켓이 비어있지 않다면 	
+  {		
+    if (item.key == ht[i].key)		
+      {			printf("S ");			
+            return ;		
+      }		
+      i = (i + 1) % D; // 0~TABLE_SIZE 내에서 값이 1씩 증가한다. 		
+      if (i == value)		
+      {			
+          return ;		
+      }	
+   } 	
+   
+   printf("F ");	
+   return ;
+}
